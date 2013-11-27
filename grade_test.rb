@@ -35,6 +35,8 @@ class Student
     FinalGrade.new(@grades).calc_letter_grade
   end
 
+
+
 end
 
 class FinalGrade
@@ -61,15 +63,36 @@ class FinalGrade
   end
 end
 
-# class GradeSummary
-#   def initialize(grades)
-#     @grades = grades
-#   end
+class GradeSummary
+  def initialize(roster)
+    @roster = roster
+  end
 
-#   def average_grades
-#     @grades.count
-#   end
-# end
+  def class_average
+    scores = []
+    @roster.each do |student|
+      scores << student.average_score
+    end
+  scores.inject(:+) / scores.count
+  end
+
+  def class_min
+    scores = []
+    @roster.each do |student|
+      scores << student.grades
+    end
+    scores = scores.min.min
+  end
+
+  def class_max
+    scores = []
+    @roster.each do |student|
+      scores << student.grades
+    end
+    scores = scores.max.max
+  end
+
+end
 
 
 reader = GradeReader.new('students.csv')
@@ -83,15 +106,17 @@ CSV.open('gradesreport.csv', "w") do |csv|
   end
 end
 
-
-students.each do |student|
-  puts "Last Name: #{student.last_name}"
-  puts "First Name: #{student.first_name}"
-  puts student.grades
-  puts student.average_score
-  puts student.letter_grade
-  puts "____________________"
-end
+puts "Class Average: #{GradeSummary.new(students).class_average}"
+puts "Class Min: #{GradeSummary.new(students).class_min}"
+puts "Class Min: #{GradeSummary.new(students).class_max}"
+# students.each do |student|
+#   puts "Last Name: #{student.last_name}"
+#   puts "First Name: #{student.first_name}"
+#   puts student.grades
+#   puts student.average_score
+#   puts student.letter_grade
+#   puts "____________________"
+# end
 
 
 
