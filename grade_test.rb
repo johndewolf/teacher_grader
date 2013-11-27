@@ -1,6 +1,7 @@
 require 'CSV'
 require 'pry'
 
+
 class GradeReader
   def initialize(file)
     @file = file
@@ -79,19 +80,28 @@ class GradeSummary
   def class_min
     scores = []
     @roster.each do |student|
-      scores << student.grades
+      scores << student.average_score
     end
-    scores = scores.min.min
+    scores = scores.min
   end
 
   def class_max
     scores = []
     @roster.each do |student|
-      scores << student.grades
+      scores << student.average_score
     end
-    scores = scores.max.max
+    scores = scores.max
   end
 
+  def standard_div
+    mean = class_average
+    scores = []
+    @roster.each do |student|
+      scores << student.average_score
+    end
+    variance = scores.inject(0) { |variance, x| variance += (x - mean) ** 2}
+    return Math.sqrt(variance/(scores.size-1))
+  end
 end
 
 
@@ -107,16 +117,20 @@ CSV.open('gradesreport.csv', "w") do |csv|
 end
 
 puts "Class Average: #{GradeSummary.new(students).class_average}"
-puts "Class Min: #{GradeSummary.new(students).class_min}"
-puts "Class Min: #{GradeSummary.new(students).class_max}"
-# students.each do |student|
-#   puts "Last Name: #{student.last_name}"
-#   puts "First Name: #{student.first_name}"
-#   puts student.grades
-#   puts student.average_score
-#   puts student.letter_grade
-#   puts "____________________"
-# end
+puts "Lowest Class Average: #{GradeSummary.new(students).class_min}"
+puts "Highest Class Average: #{GradeSummary.new(students).class_max}"
+puts "Class Standard Deviation: #{GradeSummary.new(students).standard_div}"
+
+puts
+students.each do |student|
+  puts "Last Name: #{student.last_name}"
+  puts "First Name: #{student.first_name}"
+  puts "Grades: "
+  puts student.grades
+  puts student.average_score
+  puts student.letter_grade
+  puts "____________________"
+end
 
 
 
