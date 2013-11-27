@@ -11,7 +11,7 @@ class GradeReader
     CSV.foreach(@file) do |row|
       last_name = row[0]
       first_name = row[1]
-      grades = row[2..-1].map {|grade| grade.to_i}
+      grades = row[2..-1].map {|grade| grade.to_f}
       student_roster << Student.new(last_name, first_name, grades)
     end
     student_roster
@@ -74,6 +74,15 @@ end
 
 reader = GradeReader.new('students.csv')
 students = reader.import_students
+
+
+CSV.open('gradesreport.csv', "w") do |csv|
+  students.sort_by!{|student| student.last_name}
+  students.each do |student|
+    csv << [student.last_name, student.first_name, student.average_score, student.letter_grade]
+  end
+end
+
 
 students.each do |student|
   puts "Last Name: #{student.last_name}"
